@@ -1,0 +1,13 @@
+﻿"pinwheel_roller_radius"= 3.5
+"pinwheel_roller_position"= 34
+"pinwheel_tooth_count"= 14
+"cycloid_eccentricity"= 1.5
+"cycloid_clearance"= 0.05
+"output_roller_position"= 20
+"output_roller_radius"= 9
+"output_stiffener_position"= 21
+"output_stiffener_radius"= 6
+"output_pin_count"= 8
+"disk_thickness"= 25
+"preload_angle"= 1.5
+"preload_height"= 3
