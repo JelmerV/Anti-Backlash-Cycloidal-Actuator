@@ -12,6 +12,7 @@ import matplotlib.pyplot as plt
 import asyncio
 from actuator import Actuator
 
+abs_start_time = time.time()
 
 async def do_torque_ramp(actuator: Actuator, duration, max_torque):
     # ramp up till max torque in either direction 
@@ -21,7 +22,7 @@ async def do_torque_ramp(actuator: Actuator, duration, max_torque):
     succes = True
 
     try:
-        print(f'Ramping to {max_torque} Nm in {ramp_duration} seconds')
+        print(f'Ramping to {max_torque} Nm in {ramp_duration} seconds.', end=' ', flush=True)
         start_time = time.time()
         while True:
             pct_done = (time.time() - start_time) / (ramp_duration)
@@ -36,7 +37,7 @@ async def do_torque_ramp(actuator: Actuator, duration, max_torque):
             raise Exception('Fault detected')
 
         #ramp down torque
-        print(f'reached max torque, ramping back down')
+        print(f'and back down', end=' ', flush=True)
         start_time = time.time()
         while True:
             pct_done = (time.time() - start_time) / (ramp_duration)
@@ -52,7 +53,7 @@ async def do_torque_ramp(actuator: Actuator, duration, max_torque):
 
     finally:
         print(f'Done. stopping motor')
-        await actuator.m.set_stop()
+        # await actuator.m.set_stop()
             
         return succes, states
     
@@ -76,14 +77,30 @@ def torque_ramp_test(actuator: Actuator, test_duration, max_torque):
 
 
 
-if __name__ == '__main__':
+if __name__ == '__main__':    
+    PLAY_TEST_TORQUE = 0.25
+    PLAY_TEST_DURATION = 8.0
+    PLAY_TEST_REPETITIONS = 6
+
+    STIFFNESS_TEST_TORQUE = 3.5
+    STIFFNESS_TEST_DURATION = 30.0
+    STIFFNESS_TEST_REPETITIONS = 5
+
+    STORED_DATA = ['POSITION', 'TORQUE', 'CONTROL_TORQUE', 'Q_CURRENT', 'FAULT']
+
+
+    print('Starting torque ramp test')
+    print(f'play test: {PLAY_TEST_TORQUE}Nm, {PLAY_TEST_DURATION}s, {PLAY_TEST_REPETITIONS} repetitions')
+    print(f'stiffness test: {STIFFNESS_TEST_TORQUE}Nm, {STIFFNESS_TEST_DURATION}s, {STIFFNESS_TEST_REPETITIONS} repetitions')
+    print('')
     test_name = input('Enter test name: ')
-    abs_start_time = time.time()
 
-    STORED_DATA = ['POSITION', 'TORQUE', 'CONTROL_TORQUE', 'Q_CURRENT', 'FAULT']	
-    actuator = Actuator(1, STORED_DATA)
-    all_states = []
 
+    # initialize actuator
+    actuator = Actuator(actuator_id=1, stored_data=STORED_DATA)
+
+    # set position to zero
+    asyncio.run(actuator.m.set_output_nearest(position=0.0))
 
     #for safety, configure motion limits
     MAX_DEVIATION = 0.20    
@@ -92,34 +109,42 @@ if __name__ == '__main__':
     print(f'Current position: {cur_pos}, setting bounds to {cur_pos-MAX_DEVIATION} to {cur_pos+MAX_DEVIATION}')
     asyncio.run(actuator.set_position_bounds(cur_pos-MAX_DEVIATION, cur_pos+MAX_DEVIATION))
 
-    # set position to zero
-    asyncio.run(actuator.m.set_output_exact(position=0.0))
 
+    # move to a repeatable position:
+    succes, states = asyncio.run(do_torque_ramp(actuator, duration=1.0, max_torque=-PLAY_TEST_TORQUE))
+    if not succes:
+        print('Failed to move to repeatable position, is output fixed?')
+        exit()
+
+
+    abs_start_time = time.time()
+    all_states = []
 
     # do multiple low torque ramps for the play calculations
     last_max_time = 0
-    for i in range(5):
-        test_df = torque_ramp_test(actuator, test_duration=8, max_torque=0.2)
+    for i in range(PLAY_TEST_REPETITIONS):
+        test_df = torque_ramp_test(actuator, test_duration=PLAY_TEST_DURATION, max_torque=PLAY_TEST_TORQUE)
         test_df['test_nr'] = i
         all_states.append(test_df)
         print(f'small ramp {i} done')
 
     # do a high torque ramp for the stiffness calculations
-    for i in range(3):
-        test_df = torque_ramp_test(actuator, test_duration=20, max_torque=3.0)
-        test_df['test_nr'] = i+10
+    for i in range(STIFFNESS_TEST_REPETITIONS):
+        test_df = torque_ramp_test(actuator, test_duration=STIFFNESS_TEST_DURATION, max_torque=STIFFNESS_TEST_TORQUE)
+        test_df['test_nr'] = i+100
         all_states.append(test_df)
         print(f'large ramp ramp {i} done')
         
 
-    # restore old bounds config
+    # stop and restore old bounds config
+    asyncio.run(actuator.m.set_stop())
     asyncio.run(actuator.set_position_bounds('nan', 'nan'))
 
 
     # store the data
     df = pd.concat(all_states)
-    timestamp = datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
-    filename = f'data/{timestamp}_torqueramp_{test_name}.csv'
+    timestamp = datetime.datetime.now().strftime('%Y-%m-%d__%H-%M-%S')
+    filename = f'test_data/{timestamp}__torqueramp__{test_name}.csv'
     print(f'Test done succesful. Saving to {filename}')
     df.to_csv(filename, index=False)
 
