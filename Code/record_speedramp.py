@@ -44,18 +44,18 @@ async def do_speed_ramp(actuator, duration, max_speed):
     return pd.DataFrame(states)
 
 if __name__ == '__main__':
-    test_duration = 4*60
-    max_speed = 10.0
+    TEST_DURATION = 4*60
+    TOP_SPEED = 12.0
     
     STORED_DATA = ['POSITION', 'VELOCITY', 'TORQUE', 'Q_CURRENT']	
 
     test_name = input('Enter test name: ')
     actuator = Actuator(1, STORED_DATA)
-    df = asyncio.run(do_speed_ramp(actuator, test_duration, max_speed))
-    print(f'Done, datarate was {len(df)/test_duration:.2f} Hz')
+    df = asyncio.run(do_speed_ramp(actuator, TEST_DURATION, TOP_SPEED))
+    print(f'Done, datarate was {len(df)/TEST_DURATION:.2f} Hz')
 
     timestamp = datetime.datetime.now().strftime('%m-%d_%H-%M-%S')
-    filename = f'data/{timestamp}_speedramp_{test_name}_{test_duration}s_{max_speed}rps.csv'
+    filename = f'test_data/{timestamp}_speedramp_{test_name}_{TEST_DURATION}s_{TOP_SPEED}rps.csv'
     print(f'Saving data to {filename}')
     df.to_csv(filename, index=False)
     df.plot(x='TIME', y=['TORQUE', 'Q_CURRENT'])
