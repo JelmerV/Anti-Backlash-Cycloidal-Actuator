@@ -18,13 +18,13 @@ async def do_speed_ramp(actuator, duration, max_speed):
     accel = max_speed / (duration/4)
 
     states = []
-    start_time = time.time()
+    start_time = time.monotonic_ns()
     speed = max_speed
 
     print_progress = 0.1
 
     while True:
-        pct_done = (time.time() - start_time) / duration
+        pct_done = (time.monotonic_ns() - start_time) / (duration*1e9)
         if pct_done > 0.25:
             speed = -max_speed
         if pct_done > 0.75:
@@ -35,22 +35,25 @@ async def do_speed_ramp(actuator, duration, max_speed):
             print(f'{pct_done*100:.0f}% done')
             print_progress += 0.1
         result = await actuator.set_position(math.nan, speed, accel_limit=accel)
-        states.append(actuator.state_to_dict(result, time.time()-start_time))
+        states.append(actuator.state_to_dict(result, time.monotonic_ns()))
 
     
     await actuator.slow_down()
     await actuator.stop_and_zero()
 
-    return pd.DataFrame(states)
+    df = pd.DataFrame(states)
+    df['TIME'] = (df['TIME'] - start_time) / 1e9
+    return df
 
 if __name__ == '__main__':
     TEST_DURATION = 4*60
-    TOP_SPEED = 12.0
+    TOP_SPEED = 1.0
     
     STORED_DATA = ['POSITION', 'VELOCITY', 'TORQUE', 'Q_CURRENT']	
 
     test_name = input('Enter test name: ')
     actuator = Actuator(1, STORED_DATA)
+
     df = asyncio.run(do_speed_ramp(actuator, TEST_DURATION, TOP_SPEED))
     print(f'Done, datarate was {len(df)/TEST_DURATION:.2f} Hz')
 

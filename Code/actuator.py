@@ -88,6 +88,7 @@ class Actuator:
 
         await self.s.command(f'conf set servopos.position_min {upper}'.encode('utf8'))
         await self.s.command(f'conf set servopos.position_max {lower}'.encode('utf8'))
+        await self.s.command(f'conf write'.encode('utf8'))
         
     def state_to_dict(self, state, timestamp=None):
         state_dict = {'TIME': timestamp or time.time()}
