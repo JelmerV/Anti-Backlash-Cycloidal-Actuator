@@ -5,7 +5,7 @@
 to be added
 
 
-![Section views](./documentation/images/cross-sections.svg)
+![Section views](./Documentation/images/cross-sections.svg)
 
 
 
