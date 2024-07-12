@@ -10,9 +10,16 @@ from actuator import Actuator
 continue_flag = True
 async def run_at_speed(actuator, speed, filename):
     print_time = time.time()
-    print_interval = 5
+    print_interval = 10
     torques = []
     last_torq_avg = 1.0
+    test_start_time = time.time()
+
+    direction_change_interfal = 120
+    direction_change_time = time.time()
+    direction = 1
+
+    print(f'Starting run-in test at {speed} rps, time: {test_start_time}, saving to {filename}')
 
     with open(filename, 'w') as f:
         result = await actuator.set_position(math.nan, speed, accel_limit=50)
@@ -21,17 +28,26 @@ async def run_at_speed(actuator, speed, filename):
 
 
         while continue_flag:
-            result = await actuator.set_position(math.nan, speed, accel_limit=50)
+            if time.time() - direction_change_time > direction_change_interfal:
+                direction_change_time = time.time()
+                direction *= -1
+                print(f'Changing direction to {direction}')
+            result = await actuator.set_position(math.nan, speed*direction, accel_limit=2)
             state = actuator.state_to_dict(result, time.time_ns())
+            state['DIRECTION'] = direction
             f.write(';'.join(map(str, state.values())) + '\n')
-            torques.append(state['TORQUE'])
+            torques.append(state['TORQUE'] * direction)
 
             if time.time() - print_time > print_interval:
                 torq_avg = sum(torques) / len(torques)
-                torq_change = (torq_avg-last_torq_avg)/last_torq_avg * 100
+                if last_torq_avg == 0:
+                    torq_change = 0
+                else:
+                    torq_change = (torq_avg-last_torq_avg)/last_torq_avg * 100
                 torques = []
                 last_torq_avg = torq_avg
-                print(f'torque: {state["TORQUE"]:.3f},\t torque_avg: {torq_avg:.3f},\t torq_change:{torq_change:7.4f}%,\t temp_moteus: {state["TEMPERATURE"]}C, \t temp_motor: {state["MOTOR_TEMPERATURE"]:.3f}?')
+                time_elapsed = time.time() - test_start_time
+                print(f'Time: {time_elapsed:.1f}s,\t torque_avg: {torq_avg:7.3f},\t torq_change:{torq_change:7.3f}%,\t temp_moteus: {state["TEMPERATURE"]}C, \t temp_motor:~{state["MOTOR_TEMPERATURE"] *0.442 - 1.62:.2f}C')
                 print_time = time.time()
 
     
@@ -51,7 +67,7 @@ if __name__ == '__main__':
     test_name = input('Enter test name: ')
     actuator = Actuator(1, STORED_DATA)
     
-    timestamp = datetime.datetime.now().strftime('%m-%d_%H-%M-%S')
+    timestamp = datetime.datetime.now().strftime('%Y-%m-%d__%H-%M-%S')
     filename = f'test_data/{timestamp}_run-in_{test_name}_{TOP_SPEED}rps.csv'
 
     # start thread to collect data

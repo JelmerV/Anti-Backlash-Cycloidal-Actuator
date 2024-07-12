@@ -35,8 +35,12 @@ async def do_speed_ramp(actuator, duration, max_speed):
             print(f'{pct_done*100:.0f}% done')
             print_progress += 0.1
         result = await actuator.set_position(math.nan, speed, accel_limit=accel)
-        states.append(actuator.state_to_dict(result, time.monotonic_ns()))
+        state = actuator.state_to_dict(result, time.monotonic_ns())
+        states.append(state)
 
+        if state['FAULT'] != 0:
+            print(f'Fault detected: {state["FAULT"]}')
+            break
     
     await actuator.slow_down()
     await actuator.stop_and_zero()
@@ -46,10 +50,10 @@ async def do_speed_ramp(actuator, duration, max_speed):
     return df
 
 if __name__ == '__main__':
-    TEST_DURATION = 4*60
-    TOP_SPEED = 1.0
+    TEST_DURATION = 2*60
+    TOP_SPEED = 0.7
     
-    STORED_DATA = ['POSITION', 'VELOCITY', 'TORQUE', 'Q_CURRENT']	
+    STORED_DATA = ['POSITION', 'VELOCITY', 'TORQUE', 'Q_CURRENT', 'FAULT', 'CONTROL_VELOCITY']	
 
     test_name = input('Enter test name: ')
     actuator = Actuator(1, STORED_DATA)
@@ -57,12 +61,12 @@ if __name__ == '__main__':
     df = asyncio.run(do_speed_ramp(actuator, TEST_DURATION, TOP_SPEED))
     print(f'Done, datarate was {len(df)/TEST_DURATION:.2f} Hz')
 
-    timestamp = datetime.datetime.now().strftime('%m-%d_%H-%M-%S')
-    filename = f'test_data/{timestamp}_speedramp_{test_name}_{TEST_DURATION}s_{TOP_SPEED}rps.csv'
+    timestamp = datetime.datetime.now().strftime('%Y-%m-%d__%H-%M-%S')
+    filename = f'test_data/{timestamp}_speedramp_{test_name}_{TEST_DURATION}s.csv'
     print(f'Saving data to {filename}')
     df.to_csv(filename, index=False)
     df.plot(x='TIME', y=['TORQUE', 'Q_CURRENT'])
-    df.plot(x='TIME', y='VELOCITY')
+    df.plot(x='TIME', y=['VELOCITY', 'CONTROL_VELOCITY'])
     df.plot(x='VELOCITY', y='TORQUE', kind='scatter')
     plt.show()
     

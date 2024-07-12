@@ -5,27 +5,43 @@ import pandas as pd
 
 
 test_data = {
-    'conic initial': [ (
-            'test_data/2024-06-27__14-15-42__torqueramp__conic init 1.csv',
-            'test_data/2024-06-27__14-22-03__torqueramp__conic init 2.csv',
-            'test_data/2024-06-27__14-27-14__torqueramp__conic init 3.csv',
-            'test_data/2024-06-27__14-36-29__torqueramp__conic init 4.csv',
-            'test_data/2024-06-27__14-41-07__torqueramp__conic init 5.csv',
-            'test_data/2024-06-27__14-45-53__torqueramp__conic init 6.csv',
-            'test_data/2024-06-27__14-50-50__torqueramp__conic init 7.csv',
-            'test_data/2024-06-27__14-55-34__torqueramp__conic init 8.csv',
-            'test_data/2024-06-27__15-01-01__torqueramp__conic init 9.csv',
-        ), 'test_data/06-27_15-11-19_speedramp_conic init_240s_1.0rps.csv'],
+    # 'conic initial': [ (
+    #         'test_data/2024-06-27__14-15-42__torqueramp__conic init 1.csv',
+    #         'test_data/2024-06-27__14-22-03__torqueramp__conic init 2.csv',
+    #         'test_data/2024-06-27__14-27-14__torqueramp__conic init 3.csv',
+    #         'test_data/2024-06-27__14-36-29__torqueramp__conic init 4.csv',
+    #         'test_data/2024-06-27__14-41-07__torqueramp__conic init 5.csv',
+    #         'test_data/2024-06-27__14-45-53__torqueramp__conic init 6.csv',
+    #         'test_data/2024-06-27__14-50-50__torqueramp__conic init 7.csv',
+    #         'test_data/2024-06-27__14-55-34__torqueramp__conic init 8.csv',
+    #         'test_data/2024-06-27__15-01-01__torqueramp__conic init 9.csv',
+    #     ), 'test_data/06-27_15-11-19_speedramp_conic init_240s_1.0rps.csv'],
+
+    'conic init': [ (
+
+            'test_data/2024-07-08__10-39-20__torqueramp__conic init5.csv',
+            'test_data/2024-07-08__10-45-19__torqueramp__conic init1.csv',
+            'test_data/2024-07-08__10-51-07__torqueramp__init6.csv',
+    ), 'test_data/2024-07-08__10-15-02_speedramp_conic_240s.csv',],
+
+    'conic run-in': [ (
+        'test_data/2024-07-08__20-31-26__torqueramp__conic runin1.csv',
+        'test_data/2024-07-08__20-38-14__torqueramp__conic runin5.csv', 
+        'test_data/2024-07-08__20-44-01__torqueramp__conic runin6.csv',
+    ), 'test_data/2024-07-08__17-07-13_speedramp_conic runin_240s.csv'],
 }
+ 
 
 
+# base runin6 -> 1cm displacemetn at 30cm arm -> 2 degrees exact
 
-def average_test_repetitions(df):
+
+def average_test_repetitions(df, groupby):
     data = []
-    grouped = df.groupby('test_nr')
+    grouped = df.groupby('groupby')
 
     for name, group in grouped:
-        group = group.drop('test_nr', axis=1)
+        group = group.drop('groupby', axis=1)
         group.index = group.index - group.index[0]
 
         old_len = len(group)
@@ -43,7 +59,7 @@ def average_test_repetitions(df):
     # average data using numpy
     data_mean = np.mean(np.array(data), axis=0)
 
-    new_columns = df.columns.drop('test_nr')
+    new_columns = df.columns.drop('groupby')
     mean_df = pd.DataFrame(data_mean, columns=new_columns)
 
     # smooth data
@@ -79,8 +95,8 @@ def load_torquedata(filename):
     stiffness_tests = df[df['test_nr'] >= TEST_NR_OFFSET].copy()
     stiffness_tests['test_nr'] = stiffness_tests['test_nr'] - TEST_NR_OFFSET
 
-    play_test_mean = average_test_repetitions(play_tests)
-    stiffness_test_mean = average_test_repetitions(stiffness_tests)
+    play_test_mean = average_test_repetitions(play_tests, 'test_nr')
+    stiffness_test_mean = average_test_repetitions(stiffness_tests, 'test_nr')
 
 
     return play_test_mean, stiffness_test_mean

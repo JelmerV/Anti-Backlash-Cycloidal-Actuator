@@ -79,11 +79,11 @@ def torque_ramp_test(actuator: Actuator, test_duration, max_torque):
 
 if __name__ == '__main__':    
     PLAY_TEST_TORQUE = 4.0          # Nm at output
-    PLAY_TEST_DURATION = 5.0
+    PLAY_TEST_DURATION = 4.0
     PLAY_TEST_REPETITIONS = 5
 
     STIFFNESS_TEST_TORQUE = 40.0          # Nm at output
-    STIFFNESS_TEST_DURATION = 28.0
+    STIFFNESS_TEST_DURATION = 20.0
     STIFFNESS_TEST_REPETITIONS = 3
 
     STORED_DATA = ['POSITION', 'TORQUE', 'CONTROL_TORQUE', 'Q_CURRENT', 'FAULT']
