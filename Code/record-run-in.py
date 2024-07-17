@@ -24,6 +24,7 @@ async def run_at_speed(actuator, speed, filename):
     with open(filename, 'w') as f:
         result = await actuator.set_position(math.nan, speed, accel_limit=50)
         state = actuator.state_to_dict(result, time.time_ns())
+        state['DIRECTION'] = direction
         f.write(';'.join(state.keys()) + '\n')
 
 
