@@ -89,11 +89,15 @@ if __name__ == '__main__':
     STORED_DATA = ['POSITION', 'TORQUE', 'CONTROL_TORQUE', 'Q_CURRENT', 'FAULT']
 
 
-    print('Starting torque ramp test')
+    print('\nStarting torque ramp test')
     print(f'play test: {PLAY_TEST_TORQUE}Nm, {PLAY_TEST_DURATION}s, {PLAY_TEST_REPETITIONS} repetitions')
     print(f'stiffness test: {STIFFNESS_TEST_TORQUE}Nm, {STIFFNESS_TEST_DURATION}s, {STIFFNESS_TEST_REPETITIONS} repetitions')
     print('')
     test_name = input('Enter test name: ')
+
+    if test_name == '':
+        print('No test name given, exiting')
+        exit()
 
 
     # initialize actuator

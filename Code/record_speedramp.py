@@ -51,11 +51,17 @@ async def do_speed_ramp(actuator, duration, max_speed):
 
 if __name__ == '__main__':
     TEST_DURATION = 2*60
-    TOP_SPEED = 0.7
+    TOP_SPEED = 0.6
     
     STORED_DATA = ['POSITION', 'VELOCITY', 'TORQUE', 'Q_CURRENT', 'FAULT', 'CONTROL_VELOCITY']	
 
+    print(f'\nRunning speed ramp test for {TEST_DURATION} seconds going upto {TOP_SPEED} rev/s at output')
     test_name = input('Enter test name: ')
+
+    if test_name == '':
+        print('No test name given, exiting')
+        exit()
+
     actuator = Actuator(1, STORED_DATA)
 
     df = asyncio.run(do_speed_ramp(actuator, TEST_DURATION, TOP_SPEED))
