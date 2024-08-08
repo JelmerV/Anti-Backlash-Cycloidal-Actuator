@@ -31,6 +31,7 @@ async def do_torque_ramp(actuator: Actuator, duration, max_torque):
             torque = max_torque * pct_done
             result = await actuator.set_position(feedforward_torque=torque, kp_scale=0.0, kd_scale=0.0)
             states.append(actuator.state_to_dict(result, time.monotonic_ns()))
+            await asyncio.sleep(0.001)
             
         if states[-1]['FAULT'] != 0:
             print(f'fault code: {states[-1]["FAULT"]}, STOPPING')
@@ -46,6 +47,7 @@ async def do_torque_ramp(actuator: Actuator, duration, max_torque):
             torque = max_torque * (1-pct_done)
             result = await actuator.set_position(feedforward_torque=torque, kp_scale=0.0, kd_scale=0.0)
             states.append(actuator.state_to_dict(result, time.monotonic_ns()))
+            await asyncio.sleep(0.001)
 
     except Exception as e:
         print(f'torqueramp failed. Error: {e}')
@@ -67,7 +69,11 @@ def torque_ramp_test(actuator: Actuator, test_duration, max_torque):
         test_df = pd.concat([test_df, pd.DataFrame(neg_states)])
     
     if not pos_succes or not neg_succes:
-        print('Ramp failed')
+        timestamp = datetime.datetime.now().strftime('%Y-%m-%d__%H-%M-%S')
+        filename = f'test_data/{timestamp}__torquerampfailed__{test_name}.csv'
+        df.to_csv(filename, index=False)
+
+        print(f'Ramp failed, still saved data to {filename}')
         test_df.plot(x='TIME', y='TORQUE')
         plt.show()
         exit()

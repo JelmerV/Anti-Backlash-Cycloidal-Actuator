@@ -26,6 +26,10 @@ class Actuator:
             stored_data = self.stored_data.copy()
 
         qr = moteus.QueryResolution()
+
+        if 'TRAJECTORY_COMPLETE' in stored_data:
+            qr.trajectory_complete = moteus.INT8            
+
         for attr in dir(qr):
             if attr.startswith('_'):
                 continue

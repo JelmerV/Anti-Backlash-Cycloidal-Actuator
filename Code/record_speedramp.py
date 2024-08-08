@@ -34,13 +34,17 @@ async def do_speed_ramp(actuator, duration, max_speed):
         if pct_done > print_progress:
             print(f'{pct_done*100:.0f}% done')
             print_progress += 0.1
-        result = await actuator.set_position(math.nan, speed, accel_limit=accel)
+        result = await actuator.set_position(math.nan, speed, accel_limit=accel, velocity_limit=max_speed)
         state = actuator.state_to_dict(result, time.monotonic_ns())
         states.append(state)
 
         if state['FAULT'] != 0:
             print(f'Fault detected: {state["FAULT"]}')
-            break
+            df = pd.DataFrame(states)
+            df['TIME'] = (df['TIME'] - start_time) / 1e9
+            return df
+
+        await asyncio.sleep(0.0005)
     
     await actuator.slow_down()
     await actuator.stop_and_zero()
@@ -50,8 +54,8 @@ async def do_speed_ramp(actuator, duration, max_speed):
     return df
 
 if __name__ == '__main__':
-    TEST_DURATION = 2*60
-    TOP_SPEED = 0.6
+    TEST_DURATION = 60
+    TOP_SPEED = 2.1
     
     STORED_DATA = ['POSITION', 'VELOCITY', 'TORQUE', 'Q_CURRENT', 'FAULT', 'CONTROL_VELOCITY']	
 
