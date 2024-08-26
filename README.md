@@ -16,23 +16,19 @@ Furthermore, the designed actuator is of performance that is competitive with re
 
 
 <div style="display: inline-block; background-color: white; padding: 10px;">
-  <img src="Documentation/baseline cross-section.svg" alt="Baseline section views" height="400">
+  <img src="Documentation/baseline cross-section.svg" alt="Baseline section views" height="350">
 </div>
 
 <p float="left">
-  <img src="Documentation/Photos/prototype parts.jpg" alt="Prototype parts" height="300">
-  <img src="Documentation/Photos/prototypes assembled.jpg" alt="Three assembled prototypes and mounting and locking plates" height="300">
+  <img src="Documentation/Photos/prototype parts.jpg" alt="Prototype parts" height="250">
+  <img src="Documentation/Photos/prototypes assembled.jpg" alt="Three assembled prototypes and mounting and locking plates" height="250">
 </p>
 
 ## Anti-Backlash mechanism
 
 <p float="left">
-  <div style="display: inline-block; background-color: white; padding: 10px;">
-    <img src="Documentation/split-pinwheel isolated parts.svg" alt="Split Non-pinwheel mechanism - modified parts" height="300">
-  </div>
-  <div style="display: inline-block; background-color: white; padding: 10px;">
-    <img src="Documentation/conic isolated parts.svg" alt="Conic Cycloidal disk mechanism - modified parts" height="300">
-  </div>
+    <img src="Documentation/split-pinwheel isolated parts.svg" alt="Split Non-pinwheel mechanism - modified parts" height="200">
+    <img src="Documentation/conic isolated parts.svg" alt="Conic Cycloidal disk mechanism - modified parts" height="200">
 </p>
 
 ## License
