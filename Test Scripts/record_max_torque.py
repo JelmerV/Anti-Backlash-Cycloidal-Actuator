@@ -102,8 +102,8 @@ def e_stop_detector():
 
 
 if __name__ == '__main__':
-    STIFFNESS_TEST_TORQUE = 120.0          # Nm at output
-    STIFFNESS_TEST_DURATION = 10.0
+    STIFFNESS_TEST_TORQUE = 90.0          # Nm at output
+    STIFFNESS_TEST_DURATION = 8.0
     STIFFNESS_TEST_REPETITIONS = 2
 
     # STORED_DATA = ['POSITION', 'TORQUE', 'CONTROL_TORQUE', 'Q_CURRENT', 'FAULT', 
