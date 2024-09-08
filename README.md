@@ -1,4 +1,4 @@
-# MSc Thesis - Cycloidal actuator with anti-backlash mechanisms for Humanoid Robots
+# MSc Thesis - Cost-Effective and Torque-Dense Cycloidal Actuator with Anti-Backlash Mechanisms
 
 Accompaning files for the thesis work "Anti-Backlash Mechanisms for Cost-Effective Cycloidal Drive Robotic Actuators: Design and Evaluation"
 
@@ -6,21 +6,16 @@ Results - Test scripts - CAD source - Step files - Documentation - Diagrams - Ph
 
 ## Abstract
 
-Legged robots require numerous torque-dense actuators. This makes it especially valuable when the actuators are low-cost. The use of 3D-printed components makes this possible but comes at the expense of inferior tolerances and material properties. This can increase reducer play, which is resolvable using an anti-backlash mechanism.
-
-In this work, two novel anti-backlash mechanisms for cycloidal reducers were designed and integrated into a compact actuator design. One uses a conically shaped cycloidal disk, the other uses a split non-pinwheel design. Several prototypes were manufactured and extensively tested in comparison to a baseline model. Experimental results show that the proposed mechanisms reduce play but at the cost of increased friction. Both function using an adjustable preload that can be configured for the intended application based on the trade-off between play and friction.
-
-Furthermore, the designed actuator is of performance that is competitive with recent works. Using 3D-printed components proves to be a viable manufacturing method for cost-effective designs.
+3D-printing is a promising method for cost-effective actuator designs, but it often results in less precise tolerances, leading to increased play.
+In this work, we propose two novel anti-backlash mechanisms for cycloidal reducers. One uses a conically shaped cycloidal disk, and the other uses a split non-pinwheel design. Both were integrated into a compact actuator design. Two prototypes were manufactured and extensively tested in comparison to a baseline model. Experimental results show that the proposed mechanisms reduce play at the cost of increased friction. Both mechanisms utilize an adjustable preload that can be configured for the intended application based on the trade-off between play and friction.
+Furthermore, the designed actuator demonstrates performance that is competitive with recent works. Using 3D-printed components proves to be a viable manufacturing method for cost-efficient designs.
 
 ## Actuator design
 
-
-<div style="display: inline-block; background-color: white; padding: 10px;">
-  <img src="Documentation/baseline cross-section.svg" alt="Baseline section views" height="350">
-</div>
+<img src="Documentation/baseline cross-section - double.svg" alt="Baseline section views" height="300">
 
 <p float="left">
-  <img src="Documentation/Photos/prototype parts.jpg" alt="Prototype parts" height="250">
+  <img src="Documentation/printed-parts_annotated.svg" alt="Prototype parts" height="250">
   <img src="Documentation/Photos/prototypes assembled.jpg" alt="Three assembled prototypes and mounting and locking plates" height="250">
 </p>
 
