@@ -15,8 +15,8 @@ async def record_trajectory(actuator, commands):
     start_time = time.monotonic_ns()
     for i, command in enumerate(commands):
         count = 2
+        print(f'Command {i+1}/{len(commands)}: {command}')
         while True:
-            print(f'Command {i+1}/{len(commands)}: {command}')
 
             result = await actuator.set_position(**command)
             state = actuator.state_to_dict(result, time.monotonic_ns())
@@ -60,9 +60,12 @@ if __name__ == '__main__':
     commands = [{'position': 0.0, 'velocity': 0.0, 'accel_limit': 0.5,  'velocity_limit': 1.0}]
     pos_offset = -0.6
 
-    max_velocity = 1.6
-    for accel in [1.0, 3.0, 6.0, 8.0, 10, 12, 14, 16]:
-        for pos in [0.0, 0.07, 0.14, 0.21, 0.35, 0.5, 0.7, 0.0, 0.4, 0.0]:
+    # max_velocity = 1.6
+    # for accel in [1.0, 3.0, 6.0, 8.0, 10, 12, 14, 16]:
+    #     for pos in [0.0, 0.07, 0.14, 0.21, 0.35, 0.5, 0.7, 0.0, 0.4, 0.0]:
+    max_velocity = 1.1
+    for accel in [1.0, 3.0, 6.0, 8.0, 10, 1.0]:
+        for pos in [0.0, 0.07, 0.14, 0.21, 0.5, 0.2, 0.4, 0.0]:
             commands.append({
                 'position': pos+pos_offset,
                 'velocity': 0.0, 
