@@ -12,18 +12,18 @@ Furthermore, the designed actuator demonstrates performance that is competitive 
 
 ## Actuator design
 
-<img src="Documentation/baseline cross-section - double.svg" alt="Baseline section views" height="300">
+<img src="Documentation/diagrams/baseline cross-section - double.svg" alt="Baseline section views" height="300">
 
 <p float="left">
-  <img src="Documentation/printed-parts_annotated.svg" alt="Prototype parts" height="250">
-  <img src="Documentation/Photos/prototypes assembled.jpg" alt="Three assembled prototypes and mounting and locking plates" height="250">
+  <img src="Documentation/diagrams/printed-parts_annotated.svg" alt="Prototype parts" height="250">
+  <img src="Documentation/Photos and diagrams/prototypes assembled.jpg" alt="Three assembled prototypes and mounting and locking plates" height="250">
 </p>
 
 ## Anti-Backlash mechanism
 
 <p float="left">
-    <img src="Documentation/split-pinwheel isolated parts.svg" alt="Split Non-pinwheel mechanism - modified parts" height="200">
-    <img src="Documentation/conic isolated parts.svg" alt="Conic Cycloidal disk mechanism - modified parts" height="200">
+    <img src="Documentation/diagrams/split-pinwheel isolated parts.svg" alt="Split Non-pinwheel mechanism - modified parts" height="200">
+    <img src="Documentation/diagrams/conic isolated parts.svg" alt="Conic Cycloidal disk mechanism - modified parts" height="200">
 </p>
 
 
